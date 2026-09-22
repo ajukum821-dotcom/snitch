@@ -1,0 +1,141 @@
+1. await missing
+   📁 controllers/auth.controller.js
+   ❌ const user = userModel.findOne({ email })
+   ✅ const user = await userModel.findOne({ email })
+
+
+2. exists spelling
+   📁 controllers/auth.controller.js
+   ❌ isUserAlreadyExits
+   ✅ isUserAlreadyExists
+
+
+3. bcrypt passwordHash
+   📁 controllers/auth.controller.js
+   Login ke andar:
+   ✅ await bcrypt.compare(password, user.passwordHash)
+
+
+4. res.cookie()
+   📁 controllers/auth.controller.js
+   Login + Refresh controller:
+   ❌ res.cookies(...)
+   ✅ res.cookie(...)
+
+
+5. cookie-parser
+   📁 app.js
+   Add:
+   import cookieParser from "cookie-parser";
+
+   app.use(cookieParser());
+
+
+6. req.cookies
+   📁 controllers/auth.controller.js
+   Refresh controller:
+   ✅ const refreshToken = req.cookies.refreshToken;
+
+
+7. userId payload consistency
+   📁 utils/auth.js
+   + loginController
+   + refreshController
+
+   Token:
+   ✅ { userId, role }
+
+   Decode:
+   ✅ const { userId, role } = decoded;
+
+
+8. ACCESS_TOKEN_SECRET spelling
+   📁 config/config.js
+   📁 utils/auth.js
+   📁 .env
+
+   Everywhere same name:
+   ✅ ACCESS_TOKEN_SECRET
+
+
+9. Authorization header
+   📁 middleware/auth.middleware.js
+
+   ❌ req.headers.Authorization
+   ✅ req.headers.authorization
+
+
+10. Bearer token extraction
+    📁 middleware/auth.middleware.js
+
+    ✅ const accessToken =
+       req.headers.authorization?.split(" ")[1];
+
+
+11. Access Token verification
+    📁 middleware/auth.middleware.js
+
+    ✅ const decoded = readAccessToken(accessToken);
+
+
+12. req.user
+    📁 middleware/auth.middleware.js
+
+    ✅ req.user = decoded;
+    next();
+
+
+13. Protected route
+    📁 routes/auth.routes.js
+
+    ✅ router.get("/getme", authenticate, getmeController);
+
+
+14. User null check
+    📁 controllers/auth.controller.js
+    getmeController
+
+    ✅ if (!user) {
+         return res.status(404).json({
+           status: false,
+           message: "User not found"
+         });
+       }
+
+
+15. Refresh Token rotation
+    📁 controllers/auth.controller.js
+    refreshToken controller
+
+    ✅ DB me newRefreshToken save
+    ✅ cookie me newRefreshToken save
+
+
+16. Refresh Token mismatch
+    📁 controllers/auth.controller.js
+
+    ✅ if (refreshToken !== user.refreshToken)
+
+
+17. Access Token expiry
+    📁 utils/auth.js
+
+    ✅ expiresIn: "15m"
+
+
+18. Refresh Token expiry
+    📁 utils/auth.js
+
+    ✅ expiresIn: "7d"
+
+
+19. Login method
+    📁 routes/auth.routes.js
+
+    ✅ router.post("/login", loginController)
+
+
+20. GetMe method
+    📁 routes/auth.routes.js
+
+    ✅ router.get("/getme", authenticate, getmeController)
